@@ -8,7 +8,7 @@
 // ─── CONFIGURATION ───────────────────────────────────────────
 const APP_CONFIG = {
   // ⚠️ Replace with your deployed Google Apps Script Web App URL
-  BACKEND_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+  BACKEND_URL: 'https://script.google.com/macros/s/AKfycbyr671rirHipJsIg8UqC0FOHpARher_9-k6KqtwEYVwgMNVdy4yowDFDVBVqfUYFCM/exec',
 
   // Face recognition threshold (lower = stricter)
   FACE_THRESHOLD: 0.5,
