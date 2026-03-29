@@ -6,7 +6,7 @@
 
 // ─── CONFIGURATION ───────────────────────────────────────────
 const APP_CONFIG = {
-  BACKEND_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+  BACKEND_URL: 'https://script.google.com/macros/s/AKfycbyr671rirHipJsIg8UqC0FOHpARher_9-k6KqtwEYVwgMNVdy4yowDFDVBVqfUYFCM/exec',
   FACE_THRESHOLD: 0.5,
   MODEL_URL: 'https://unpkg.com/face-api.js@0.22.2/weights',
   GEO_ALLOWED_LAT: 30.0000,
