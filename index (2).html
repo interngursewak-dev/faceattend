@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0d0d1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>FaceAttend</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 1: MAIN / SCANNER
+═══════════════════════════════════════════════ -->
+<div id="screen-main" class="screen active">
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon">◈</span>
+      <span class="brand-name">FaceAttend</span>
+    </div>
+    <div id="clock" class="header-clock"></div>
+  </header>
+
+  <div class="camera-container">
+    <div class="camera-frame">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="overlay-canvas"></canvas>
+      <div class="frame-corners">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+      </div>
+      <div id="scan-line" class="scan-line"></div>
+      <div id="face-box" class="face-box hidden"></div>
+    </div>
+    <div id="cam-status" class="cam-status">Initializing camera…</div>
+  </div>
+
+  <div id="model-status" class="model-status">
+    <div class="loader-ring"></div>
+    <span id="model-status-text">Loading AI models…</span>
+  </div>
+
+  <div class="main-actions">
+    <button id="btn-punch" class="btn-primary" disabled>
+      <span class="btn-icon">◉</span>
+      <span class="btn-label">PUNCH</span>
+    </button>
+    <button id="btn-add-user" class="btn-secondary">
+      <span class="btn-icon">⊕</span>
+      <span class="btn-label">ADD USER</span>
+    </button>
+  </div>
+
+  <div id="geo-status" class="geo-badge">
+    <span class="geo-dot"></span>
+    <span id="geo-text">Locating…</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 2: RESULT
+═══════════════════════════════════════════════ -->
+<div id="screen-result" class="screen">
+  <div class="result-card">
+    <div id="result-icon" class="result-icon"></div>
+    <div id="result-name" class="result-name"></div>
+    <div id="result-badge" class="result-badge"></div>
+    <div class="result-details">
+      <div class="detail-row">
+        <span class="detail-label">Time</span>
+        <span id="result-time" class="detail-value"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date</span>
+        <span id="result-date" class="detail-value"></span>
+      </div>
+      <div id="result-workhours-row" class="detail-row hidden">
+        <span class="detail-label">Hours</span>
+        <span id="result-workhours" class="detail-value accent"></span>
+      </div>
+      <div id="result-punchin-row" class="detail-row hidden">
+        <span class="detail-label">Punch In</span>
+        <span id="result-punchin" class="detail-value"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Distance</span>
+        <span id="result-distance" class="detail-value"></span>
+      </div>
+    </div>
+    <button id="btn-result-back" class="btn-back">← Back to Scanner</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 3: ADD USER
+═══════════════════════════════════════════════ -->
+<div id="screen-add-user" class="screen">
+  <div class="screen-header">
+    <button id="btn-add-back" class="icon-back">←</button>
+    <h2 class="screen-title">Add New User</h2>
+  </div>
+
+  <div class="add-camera-wrap">
+    <div class="camera-frame small">
+      <video id="video-add" autoplay playsinline muted></video>
+      <canvas id="overlay-canvas-add"></canvas>
+      <div class="frame-corners">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+      </div>
+      <div id="add-face-indicator" class="add-face-indicator hidden">
+        <span class="face-found-dot"></span>
+        Face detected
+      </div>
+    </div>
+  </div>
+
+  <div class="add-form">
+    <div class="input-group">
+      <label class="input-label">Full Name</label>
+      <input id="input-name" type="text" class="text-input" placeholder="Enter employee name…" autocomplete="off" />
+    </div>
+
+    <div id="capture-status" class="capture-status"></div>
+
+    <button id="btn-capture" class="btn-capture" disabled>
+      <span class="btn-icon">◎</span> Capture Face
+    </button>
+    <button id="btn-save-user" class="btn-save" disabled>
+      <span class="btn-icon">✓</span> Save User
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 4: USER ADDED CONFIRMATION
+═══════════════════════════════════════════════ -->
+<div id="screen-user-added" class="screen">
+  <div class="confirm-card">
+    <div class="confirm-checkmark">✓</div>
+    <h2 class="confirm-title">User Added!</h2>
+    <div id="confirm-name" class="confirm-name"></div>
+    <p class="confirm-sub">Face profile saved successfully</p>
+    <button id="btn-confirm-back" class="btn-back">← Back to Scanner</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     ERROR / TOAST OVERLAY
+═══════════════════════════════════════════════ -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- ─── Scripts ───────────────────────────────────── -->
+<!-- face-api.js from CDN (minified for perf) -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
